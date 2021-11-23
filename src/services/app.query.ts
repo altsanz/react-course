@@ -1,4 +1,4 @@
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {useMutation, useQuery} from "react-query";
 import {Queries} from './queries';
 import AppService from "./app.service";
@@ -7,8 +7,8 @@ import locale from "../shared/locale";
 import {hideLoading, showLoading} from "../actions/loadingActions";
 import {getListDataFromFilter, getPersonData, getPersonsListByName} from "../shared/utils";
 import {setGlobalData} from "../actions/homeActions";
-import {removeClearFilters, showClearFilters} from "../actions/filterActions";
-import {SelectedFilterData} from "../interfaces/appInterfaces";
+import {removeClearFilters, setFilterDataFromFilter, showClearFilters} from "../actions/filterActions";
+import {FilterState, State} from "../interfaces/appInterfaces";
 
 const appService = new AppService();
 
@@ -101,18 +101,23 @@ export const useFetchGetPersonByNameMutation = () => {
 
 export const useFetchGetFilteredListMutation = () => {
   const dispatch = useDispatch();
-  let filters: SelectedFilterData;
+  
+  const filters = useSelector((state: State) => state.filter)
+
   return useMutation(
-    (data: SelectedFilterData) => {
+    (filters: FilterState) => {
+      debugger;
+      const newFilters = { ...filters }
+      dispatch(setFilterDataFromFilter(newFilters));
       dispatch(showLoading());
-      filters = data;
       return appService.getGlobalData({url: Urls.GlobalData});
     },
     {
       onSuccess: (response = []) => {
-        dispatch(hideLoading());
         const filteredList = getListDataFromFilter(filters, response);
+        console.log(filteredList);
         dispatch(setGlobalData(filteredList));
+        dispatch(hideLoading());
       },
       onError: ({errorMessage = locale.ErrorDefault}) => {
         dispatch(hideLoading());

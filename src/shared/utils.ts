@@ -1,4 +1,5 @@
-import { Brastlewark, FriendsData, FilterData } from "../interfaces/appInterfaces";
+import { Brastlewark, FriendsData, FilterData, SelectedFilterData, State, FilterState } from "../interfaces/appInterfaces";
+import { PersonEnum } from "./enums";
 
 
 export const getPersonsListByName = (data: any): Brastlewark[] => {
@@ -51,18 +52,30 @@ export const getFilterData = (globalData: Brastlewark[]): FilterData => {
   }};
 };
 
-export const getListDataFromFilter = (filterData: any, globalData: Brastlewark[]) => {
-  const { name, hair_color, professions, ranges } = filterData;
-  const {
-    age,
-    weight,
-    height,
-  } = ranges;
-  let list: Brastlewark[] = globalData.filter((person: Brastlewark)=> person.name.toUpperCase().includes(name.toUpperCase()))
-    .filter((person: Brastlewark) => person.age >= age[0] && person.age <= age[1])
-    .filter((person: Brastlewark) => person.weight >= weight[0] && person.weight <= weight[1])
-    .filter((person: Brastlewark) => person.height >= height[0] && person.height <= height[1])
+export const getListDataFromFilter = (filterData: FilterState, globalData: Brastlewark[]) => {
+  const hair_color = filterData.multiSelectValue[PersonEnum.HAIR_COLOR];
+  const weight = filterData.slidersData[PersonEnum.WEIGHT];
+  const height = filterData.slidersData[PersonEnum.HEIGHT];
+  const age = filterData.slidersData[PersonEnum.AGE];
+  const professions = filterData.multiSelectValue[PersonEnum.PROFESSION];
+  const { personName: name } = filterData
+  let list: Brastlewark[] = globalData;
+  if(!!name) {
+    list = list.filter((person: Brastlewark)=> person.name.toUpperCase().includes(name.toUpperCase()))
+  }
+
+  if(age.length) {
+    list = list.filter((person: Brastlewark) => person.age >= age[0] && person.age <= age[1])
+  }
+
+  if(weight.length) {
+    list = list.filter((person: Brastlewark) => person.weight >= weight[0] && person.weight <= weight[1])
+  }
   
+  if(height.length) {
+    list = list.filter((person: Brastlewark) => person.height >= height[0] && person.height <= height[1])
+  }
+
   if (hair_color.length) {
     list = list.filter((person: Brastlewark) => hair_color.includes(person.hair_color))
   }
@@ -70,6 +83,7 @@ export const getListDataFromFilter = (filterData: any, globalData: Brastlewark[]
   if (professions.length) {
     list = list.filter((person: Brastlewark) => person.professions.filter((profession: string) => professions.includes(profession)).length > 0)
   }
+  debugger;
 
   return list
 }

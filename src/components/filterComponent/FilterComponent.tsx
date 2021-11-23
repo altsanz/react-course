@@ -48,7 +48,7 @@ const FilterComponent: FC<{}> = () => {
     setStatePersonName(personName);
     }, [sliderData, multiSelectValue, personName]
   );
-  const {mutateAsync: onFilter} = useFetchGetFilteredListMutation();
+  const {mutateAsync: applyFilter} = useFetchGetFilteredListMutation();
   const {mutateAsync: getAllData} = useFetchGetAllListMutation();
 
 
@@ -114,19 +114,12 @@ const FilterComponent: FC<{}> = () => {
   }
 
   const onClickFilter = () => {
-    dispatch(setFilterDataFromFilter(
-      {
-        personName: statePersonName,
-        slidersData: stateSlidersData,
-        multiSelectValue: stateMultiSelectValue
-      } as FilterState
-    ));
-    onFilter({
-      [PersonEnum.NAME]: statePersonName,
-      [PersonEnum.HAIR_COLOR]: stateMultiSelectValue[PersonEnum.HAIR_COLOR],
-      [PersonEnum.PROFESSION]: stateMultiSelectValue[PersonEnum.PROFESSION],
-      ranges: stateSlidersData
-    } as SelectedFilterData);
+    debugger;
+    applyFilter({
+      personName: statePersonName,
+      slidersData: stateSlidersData,
+      multiSelectValue: stateMultiSelectValue
+    } as FilterState);
   }
 
   const onClickClearFilter = () => {

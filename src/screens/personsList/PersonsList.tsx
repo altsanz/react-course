@@ -27,8 +27,6 @@ const PersonsList: FC<ListProps> = () => {
 
   useEffect(() => {
     setListData(globalData.slice(0, listIndex))
-    const filterInfo: FilterData = getFilterData(globalData);
-    !isFiltered && dispatch(setFilterData(filterInfo));
   }, [globalData])
 
   useFetchGetGlobalDataQuery({onSuccess: (response) => {
